@@ -1,0 +1,11 @@
+colorlog==6.7.0
+google_api_python_client==2.77.0
+google_auth_oauthlib==0.8.0
+httplib2==0.21.0
+numpy==1.23.5
+pandas==1.5.2
+plotly==5.13.0
+protobuf==4.21.12
+pytest==7.2.0
+python_dateutil==2.8.2
+streamlit==1.17.0
