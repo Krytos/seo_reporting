@@ -15,20 +15,26 @@ import streamlit as st
 fromtimestamp = datetime.fromtimestamp
 # locale.setlocale(locale.LC_TIME, "de_DE")
 
-service, admin_service = ga_auth()
-
-try:
-	accounts_list = admin_service.accountSummaries().list().execute()
-	account_name = accounts_list["accountSummaries"][0]["account"]
-	account_properties = [prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]]
-except Exception as e:
-	st.error("Keine Rechte zum Aufrufen der Daten: " + str(e))
-	exit()
+def login():
+	ga_auth()
+	st.session_state.login = True
 
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
-website = st.sidebar.text_input("Website", "https://krytos.github.io")
+if 'login' not in st.session_state:
+	st.session_state.login = False
+	login_button = st.sidebar.button("Login", on_click=login)
+else:
+	try:
+		accounts_list = st.session_state.admin_service.accountSummaries().list().execute()
+		account_name = accounts_list["accountSummaries"][0]["account"]
+		account_properties = [prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]]
+	except Exception as e:
+		st.error("Keine Rechte zum Aufrufen der Daten: " + str(e))
+		exit()
+if 'login' not in st.session_state or not st.session_state.login:
+	st.stop()
 
 properties_drowdown = st.sidebar.selectbox(
 	"Select Property", [(prop["property"], prop["displayName"]) for prop in account_properties], index=0,
@@ -38,7 +44,7 @@ properties_drowdown = st.sidebar.selectbox(
 property_full = properties_drowdown[0]
 property_id = property_full.split("/", 1)[1]
 
-hostname = service.properties().batchRunReports(
+hostname = st.session_state.service.properties().batchRunReports(
 	property=property_full, body={
 			"requests": [{
 					"dateRanges": [{
@@ -52,8 +58,9 @@ hostname = service.properties().batchRunReports(
 			}]
 	}
 ).execute()
-hostname = hostname["reports"][0]["rows"][0]["dimensionValues"][0]["value"].rsplit("/", 1)[0]
 
+hostname = hostname["reports"][0]["rows"][0]["dimensionValues"][0]["value"].rsplit("/", 1)[0]
+website = hostname
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=30))
 end_date = st.sidebar.date_input("End Date", datetime.now())
 
