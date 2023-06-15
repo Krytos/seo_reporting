@@ -13,7 +13,7 @@ import streamlit as st
 # from googleapiclient.discovery import build
 
 fromtimestamp = datetime.fromtimestamp
-locale.setlocale(locale.LC_TIME, "de_DE")
+# locale.setlocale(locale.LC_TIME, "de_DE")
 
 service, admin_service = ga_auth(['https://www.googleapis.com/auth/analytics.readonly'])
 
