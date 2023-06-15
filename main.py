@@ -1,4 +1,4 @@
-from oauth import ga_auth
+from oauth import ga_auth, open_url
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
 import pandas as pd
@@ -16,8 +16,8 @@ fromtimestamp = datetime.fromtimestamp
 # locale.setlocale(locale.LC_TIME, "de_DE")
 
 def login():
-	ga_auth()
-	st.session_state.login = True
+	open_url()
+	# st.session_state.login = True
 
 # Sidebar
 st.sidebar.header("SEO Analyse")
@@ -25,6 +25,9 @@ st.sidebar.header("SEO Analyse")
 if 'login' not in st.session_state:
 	st.session_state.login = False
 	login_button = st.sidebar.button("Login", on_click=login)
+	code = st.experimental_get_query_params().get('code', None)
+	if code:
+		ga_auth(code[0])
 else:
 	try:
 		accounts_list = st.session_state.admin_service.accountSummaries().list().execute()

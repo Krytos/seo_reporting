@@ -10,6 +10,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow, Flow
 from google.auth.exceptions import RefreshError
 from googleapiclient.discovery import build
 from dotenv import load_dotenv, find_dotenv
+from streamlit.components.v1 import html
 
 load_dotenv(find_dotenv())
 # If modifying these SCOPES, delete the file token.json.
@@ -17,7 +18,6 @@ SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SECRET = json.loads(os.getenv('SECRET'))
 HOST = os.getenv('HOST')
 PORT = int(os.getenv('PORT'))
-PORT = 8080
 SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
 # st_oauth(config=SECRET)
 CLIENT_ID = SECRET['installed']['client_id']
@@ -27,8 +27,16 @@ st.session_state.state = "state"
 STATE = st.session_state.state
 authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
 
+def open_url():
+	open_script = f"""
+        <script type="text/javascript">
+            window.open('{authorization_endpoint}', '_blank').focus();
+        </script>
+    """
+	html(open_script)
 
-def ga_auth():
+
+def ga_auth(code):
 	if 'creds' in st.session_state:
 		creds = st.session_state.creds
 	else:
@@ -39,7 +47,8 @@ def ga_auth():
 				SECRET, SCOPES
 			)
 			flow.redirect_uri = REDIRECT_URI
-			st.session_state.creds = flow.run_local_server(host=HOST, open_browser=True)
+			st.session_state.creds = flow.fetch_token(code=code)
+
 	st.session_state.service = build('analyticsdata', 'v1beta', credentials=st.session_state.creds)
 	st.session_state.admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state.creds)
 
