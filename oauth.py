@@ -54,6 +54,7 @@ def get_credentials():
 
 def ga_auth():
 	creds = None
+	code = None
 	if os.path.exists('token.json'):
 		try:
 			token = Credentials.from_authorized_user_file('token.json', SCOPES)
@@ -64,8 +65,13 @@ def ga_auth():
 		except RefreshError:
 			os.remove('token.json')
 	else:
-		login_button = st.sidebar.button("Login", on_click=open_url)
-		code = st.experimental_get_query_params().get('code', None)
+		if not code:
+			login_button = st.sidebar.button("Login", on_click=open_url)
+			if st.experimental_get_query_params().get('code', None):
+				code = st.experimental_get_query_params().get('code', None)[0]
+				st.experimental_set_query_params()
+		if not code:
+			st.stop()
 		flow = InstalledAppFlow.from_client_config(
 			SECRET, SCOPES,
 		)
@@ -78,6 +84,7 @@ def ga_auth():
 
 	service = build('analyticsdata', 'v1beta', credentials=token)
 	admin_service = build('analyticsadmin', 'v1beta', credentials=token)
+	login_button = st.empty()
 	return service, admin_service
 
 # if not code and not st.experimental_get_query_params().get('code', None):

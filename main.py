@@ -18,8 +18,8 @@ fromtimestamp = datetime.fromtimestamp
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
-
 service, admin_service = ga_auth()
+
 try:
 	accounts_list = admin_service.accountSummaries().list().execute()
 	account_name = accounts_list["accountSummaries"][0]["account"]
