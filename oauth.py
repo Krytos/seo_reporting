@@ -63,7 +63,7 @@ def ga_auth():
 			# 	SECRET, scopes
 			# )
 			flow = InstalledAppFlow.from_client_config(SECRET, SCOPES)
-			creds = flow.run_local_server(port=0)
+			creds = flow.run_local_server(host='0.0.0.0', port=8501)
 		# Save the credentials for the next run
 		with open('token.json', 'w') as token:
 			token.write(creds.to_json())
