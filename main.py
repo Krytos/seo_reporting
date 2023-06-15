@@ -1,6 +1,7 @@
-from oauth import ga_auth, open_url
+from oauth import ga_auth, get_credentials
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
+import json
 import pandas as pd
 import calendar
 import locale
@@ -14,30 +15,18 @@ import streamlit as st
 
 fromtimestamp = datetime.fromtimestamp
 # locale.setlocale(locale.LC_TIME, "de_DE")
-
-def login():
-	open_url()
-	# st.session_state.login = True
-
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
-if 'login' not in st.session_state:
-	st.session_state.login = False
-	login_button = st.sidebar.button("Login", on_click=login)
-	code = st.experimental_get_query_params().get('code', None)
-	if code:
-		ga_auth(code[0])
-else:
-	try:
-		accounts_list = st.session_state.admin_service.accountSummaries().list().execute()
-		account_name = accounts_list["accountSummaries"][0]["account"]
-		account_properties = [prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]]
-	except Exception as e:
-		st.error("Keine Rechte zum Aufrufen der Daten: " + str(e))
-		exit()
-if 'login' not in st.session_state or not st.session_state.login:
-	st.stop()
+
+service, admin_service = ga_auth()
+try:
+	accounts_list = admin_service.accountSummaries().list().execute()
+	account_name = accounts_list["accountSummaries"][0]["account"]
+	account_properties = [prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]]
+except Exception as e:
+	st.error("Keine Rechte zum Aufrufen der Daten: " + str(e))
+	exit()
 
 properties_drowdown = st.sidebar.selectbox(
 	"Select Property", [(prop["property"], prop["displayName"]) for prop in account_properties], index=0,
@@ -47,7 +36,7 @@ properties_drowdown = st.sidebar.selectbox(
 property_full = properties_drowdown[0]
 property_id = property_full.split("/", 1)[1]
 
-hostname = st.session_state.service.properties().batchRunReports(
+hostname = service.properties().batchRunReports(
 	property=property_full, body={
 			"requests": [{
 					"dateRanges": [{
@@ -137,7 +126,8 @@ def calculate_change(compare, current, data=None):
 # noinspection PyTypeChecker
 def main():
 	# Authenticate and get credentials
-	creds = st.session_state.creds
+
+	creds = get_credentials()
 
 	# Initialize client
 	client = BetaAnalyticsDataClient(credentials=creds)
