@@ -1,4 +1,4 @@
-from oauth import authenticate, ga_auth
+from oauth import ga_auth
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
 import pandas as pd
@@ -134,7 +134,7 @@ def calculate_change(compare, current, data=None):
 # noinspection PyTypeChecker
 def main():
 	# Authenticate and get credentials
-	creds = authenticate()
+	creds = st.session_state.creds
 
 	# Initialize client
 	client = BetaAnalyticsDataClient(credentials=creds)

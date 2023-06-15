@@ -17,6 +17,7 @@ pandas = "^1.5.3"
 plotly = "^5.13.1"
 google-analytics-data = "^0.16.2"
 python-dotenv = "^1.0.0"
+st-oauth = {git = "https://github.com/sfc-gh-bhess/st_oauth.git"}
 
 [tool.poetry.dev-dependencies]
 jupyter = "^1.0.0"
