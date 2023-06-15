@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "seo-reporting"
+version = "0.1.0"
+description = ""
+authors = ["Krytos <kmeinon@gmail.com>"]
+readme = "README.md"
+packages = [{include = "seo_reporting"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+google-api-python-client = "^2.80.0"
+google-auth-httplib2 = "^0.1.0"
+google-auth-oauthlib = "^1.0.0"
+google-analytics-admin = "^0.15.0"
+streamlit = "^1.19.0"
+pandas = "^1.5.3"
+plotly = "^5.13.1"
+google-analytics-data = "^0.16.2"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.dev-dependencies]
+jupyter = "^1.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
