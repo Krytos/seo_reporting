@@ -1,4 +1,6 @@
-from oauth import ga_auth, get_credentials
+import os.path
+
+from oauth import ga_auth, get_credentials, logout
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
 import json
@@ -19,6 +21,10 @@ fromtimestamp = datetime.fromtimestamp
 st.sidebar.header("SEO Analyse")
 
 service, admin_service = ga_auth()
+
+st.sidebar.button('Logout', on_click=logout)
+if not os.path.exists('token.json'):
+	st.experimental_rerun()
 
 try:
 	accounts_list = admin_service.accountSummaries().list().execute()

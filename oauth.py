@@ -31,6 +31,7 @@ SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
 # st_oauth(config=SECRET)
 CLIENT_ID = SECRET['installed']['client_id']
 REDIRECT_URI = SECRET['installed']['redirect_uris'][0]
+st.write(REDIRECT_URI)
 SCOPE = SCOPES[0]
 SESSION['state'] = "state"
 STATE = SESSION['state']
@@ -66,7 +67,7 @@ def ga_auth():
 			os.remove('token.json')
 	else:
 		if not code:
-			login_button = st.sidebar.button("Login", on_click=open_url)
+			st.sidebar.button("Login", on_click=open_url)
 			if st.experimental_get_query_params().get('code', None):
 				code = st.experimental_get_query_params().get('code', None)[0]
 				st.experimental_set_query_params()
@@ -81,35 +82,11 @@ def ga_auth():
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
-
+		st.experimental_rerun()
 	service = build('analyticsdata', 'v1beta', credentials=token)
 	admin_service = build('analyticsadmin', 'v1beta', credentials=token)
-	login_button = st.empty()
 	return service, admin_service
 
-# if not code and not st.experimental_get_query_params().get('code', None):
-	# 	open_url()
-	# 	st.stop()
-	# elif not code:
-	# 	code = st.experimental_get_query_params().get('code', None)[0]
-	#
-	# try:
-	# 	creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-	# 	creds.refresh(Request())
-	# 	print('refreshed')
-	# 	with open('token.json', 'w') as f:
-	# 		json.dump(creds.to_json(), f)
-	# except Exception as e:
-	# 	print('Exception: ', e)
-	# 	flow = InstalledAppFlow.from_client_config(
-	# 		SECRET, SCOPES,
-	# 	)
-	# 	flow.redirect_uri = REDIRECT_URI
-	# 	print(code)
-	# 	flow.fetch_token(code=code)
-	# 	token = flow.credentials
-	# 	with open('token.json', 'w') as f:
-	# 		json.dump(token.to_json(), f)
-	# 	creds = token
-	# print('build')
+def logout():
+	os.remove('token.json')
 
