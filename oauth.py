@@ -12,6 +12,9 @@ load_dotenv(find_dotenv())
 # If modifying these SCOPES, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SECRET = json.loads(os.getenv('SECRET'))
+HOST = os.getenv('HOST')
+PORT = os.getenv('PORT')
+SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
 
 
 def authenticate():
