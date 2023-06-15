@@ -17,6 +17,7 @@ SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SECRET = json.loads(os.getenv('SECRET'))
 HOST = os.getenv('HOST')
 PORT = int(os.getenv('PORT'))
+PORT = 8080
 SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
 # st_oauth(config=SECRET)
 CLIENT_ID = SECRET['installed']['client_id']
