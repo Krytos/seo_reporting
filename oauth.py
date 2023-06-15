@@ -15,7 +15,7 @@ SECRET = json.loads(os.getenv('SECRET'))
 HOST = os.getenv('HOST')
 PORT = os.getenv('PORT')
 SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
-
+print(SECRET)
 
 def authenticate():
 	"""Shows basic usage of the Google Analytics Data API.
@@ -65,7 +65,9 @@ def authenticate():
 			flow = InstalledAppFlow.from_client_config(
 				SECRET, SCOPES
 			)
-			st.session_state.creds = flow.run_local_server()
+			flow.redirect_uri = f'http://{HOST}:{PORT}/'
+			authorization_response = st.experimental_get_query_params()['code'][0]
+			st.session_state.creds = flow.fetch_token(authorization_response=authorization_response)
 
 	return st.session_state.creds
 
