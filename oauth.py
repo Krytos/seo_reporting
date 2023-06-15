@@ -37,8 +37,8 @@ def ga_auth():
 			flow = InstalledAppFlow.from_client_config(
 				SECRET, SCOPES
 			)
+			flow.redirect_uri = REDIRECT_URI
 			st.session_state.creds = flow.run_local_server(host=HOST, open_browser=True)
-
 	st.session_state.service = build('analyticsdata', 'v1beta', credentials=st.session_state.creds)
 	st.session_state.admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state.creds)
 
