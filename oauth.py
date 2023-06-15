@@ -31,12 +31,12 @@ SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
 # st_oauth(config=SECRET)
 CLIENT_ID = SECRET['installed']['client_id']
 REDIRECT_URI = SECRET['installed']['redirect_uris'][0]
-st.write(REDIRECT_URI)
+# st.write(REDIRECT_URI)
 SCOPE = SCOPES[0]
 SESSION['state'] = "state"
 STATE = SESSION['state']
 authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
-
+st.write(authorization_endpoint)
 def open_url():
 	open_script = f"""
         <script type="text/javascript">
