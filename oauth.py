@@ -3,6 +3,7 @@ import json
 import streamlit as st
 
 from streamlit.runtime.scriptrunner.script_runner import StopException
+from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow, Flow
@@ -44,8 +45,6 @@ def get_credentials():
 
 
 def ga_auth():
-	creds = None
-	code = None
 	if os.path.exists('token.json'):
 		try:
 			token = Credentials.from_authorized_user_file('token.json', SCOPES)
@@ -74,7 +73,8 @@ def ga_auth():
 	if 'token' in locals():
 		service = build('analyticsdata', 'v1beta', credentials=token)
 		admin_service = build('analyticsadmin', 'v1beta', credentials=token)
-		return service, admin_service
+		beta_client = BetaAnalyticsDataClient(credentials=token)
+		return service, admin_service, beta_client
 	else:
 		ga_auth()
 

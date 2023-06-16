@@ -20,7 +20,7 @@ fromtimestamp = datetime.fromtimestamp
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
-service, admin_service = ga_auth()
+service, admin_service, beta_client = ga_auth()
 
 st.sidebar.button('Logout', on_click=logout)
 if not os.path.exists('token.json'):
@@ -131,13 +131,6 @@ def calculate_change(compare, current, data=None):
 
 # noinspection PyTypeChecker
 def main():
-	# Authenticate and get credentials
-
-	creds = get_credentials()
-
-	# Initialize client
-	client = BetaAnalyticsDataClient(credentials=creds)
-
 	# Define the request
 	metrics = [Metric(name="totalUsers"),  # Nutzer
 			Metric(name="newUsers"),  # Neue Nutzer
@@ -172,7 +165,7 @@ def main():
 				dimensions=[Dimension(name=dimension)], metrics=metrics, )
 
 			# Run the report
-			response_compare = client.run_report(request_compare)
+			response_compare = beta_client.run_report(request_compare)
 
 			# Create a pandas DataFrame
 			if dimension == "date":
@@ -186,7 +179,7 @@ def main():
 				df_date_compare = df_date_compare.sort_values(by="date", ascending=True)
 
 		# Run the report
-		response = client.run_report(request)
+		response = beta_client.run_report(request)
 
 		# Create a pandas DataFrame
 		data = []
