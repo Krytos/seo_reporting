@@ -25,16 +25,22 @@ REDIRECT_URI = SECRET['web']['redirect_uris'][URI]
 SCOPE = SCOPES[0]
 
 def open_url():
-	flow = Flow.from_client_config(SECRET, scopes=SCOPES)
-	flow.redirect_uri = REDIRECT_URI
-	auth_url, state = flow.authorization_url()
-	open_script = f"""
-        <script type="text/javascript">
-            window.open('{auth_url}', '_blank').focus();
-        </script>
-    """
-	html(open_script)
-	print(auth_url)
+	if "localhost" in REDIRECT_URI:
+		flow = InstalledAppFlow.from_client_config(SECRET, scopes=SCOPES)
+		flow.redirect_uri = REDIRECT_URI
+		print(flow.redirect_uri)
+		flow.run_local_server(host=HOST, port=PORT)
+	else:
+		flow = Flow.from_client_config(SECRET, scopes=SCOPES)
+		flow.redirect_uri = REDIRECT_URI
+		auth_url, state = flow.authorization_url()
+		open_script = f"""
+	        <script type="text/javascript">
+	            window.open('{auth_url}', '_blank').focus();
+	        </script>
+	    """
+		html(open_script)
+		print(auth_url)
 
 
 def get_credentials():
@@ -77,7 +83,7 @@ def ga_auth():
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
 			st.stop()
-		flow = InstalledAppFlow.from_client_config(SECRET, SCOPES)
+		flow = Flow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
 		token = flow.credentials
