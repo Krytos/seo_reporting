@@ -77,8 +77,6 @@ def ga_auth():
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
 		st.experimental_rerun()
-	if 'token' not in locals():
-		ga_auth()
 	service = build('analyticsdata', 'v1beta', credentials=token)
 	admin_service = build('analyticsadmin', 'v1beta', credentials=token)
 	return service, admin_service
