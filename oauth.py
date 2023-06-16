@@ -59,10 +59,10 @@ def ga_auth():
 			print(f"token: {lnr(), token}")
 			token = Credentials(
 				token['token'],
-				refresh_token=token['refresh_token'],
 				token_uri=token['token_uri'],
 				client_id=token['client_id'],
-				client_secret=token['client_secret']
+				client_secret=token['client_secret'],
+				scopes=token['scopes']
 			)
 			session = AuthorizedSession(token)
 			with open('token.json', 'w') as f:
