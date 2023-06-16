@@ -57,7 +57,9 @@ hostname = service.properties().batchRunReports(
 	}
 ).execute()
 
-hostname = hostname["reports"][0]["rows"][0]["dimensionValues"][0]["value"].rsplit("/", 1)[0]
+st.write(hostname)
+hostname = hostname["reports"][0].get("rows")
+hostname = hostname[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0]
 website = hostname
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=30))
 end_date = st.sidebar.date_input("End Date", datetime.now())

@@ -50,13 +50,10 @@ def open_url():
 
 
 def ga_auth():
-	print(f"Session: {lnr, st.session_state}")
-	print(f"Session_State: {lnr(), st.session_state.get('session')}")
 	if os.path.exists('token.json'):
 		try:
 			with open('token.json', 'r') as f:
 				token = json.load(f)
-			print(f"token: {lnr(), token}")
 			token = Credentials(
 				token['token'],
 				token_uri=token['token_uri'],
@@ -71,23 +68,17 @@ def ga_auth():
 		except RefreshError:
 			os.remove('token.json')
 			st.session_state['token'] = None
-			print('refresh error', lnr())
 		except ValueError:
 			os.remove('token.json')
 			st.session_state['token'] = None
-			print('value error', lnr())
 	elif 'token' in st.session_state:
-		print(f"token: {lnr(), st.session_state['token']}")
 		try:
 			token = st.session_state['token']
 			session = AuthorizedSession(token)
-			print('refreshed', lnr())
 		except RefreshError:
 			st.session_state['token'] = None
-			print('refresh error', lnr())
 		except ValueError:
 			st.session_state['token'] = None
-			print('value error', lnr())
 	else:
 		code = st.experimental_get_query_params().get('code', None)
 		code = code[0] if code else None
@@ -97,24 +88,16 @@ def ga_auth():
 		flow = Flow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
-		# session = flow.authorized_session()
-		# st.session_state['session'] = session
-		# print(f"session: {lnr(), session}")
-		# print(f"Session_State: {lnr(), st.session_state['session']}")
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
-			print(token)
-			print(token.to_json())
 		st.session_state['token'] = token
 	if 'token' in locals():
-		print(f"token: {lnr(), token}")
 		service = build('analyticsdata', 'v1beta', credentials=token)
 		admin_service = build('analyticsadmin', 'v1beta', credentials=token)
 		beta_client = BetaAnalyticsDataClient(credentials=token)
 		return service, admin_service, beta_client
 	elif 'token' in st.session_state:
-		print(f"token: {lnr(), st.session_state['token']}")
 		service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'])
 		admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'])
 		beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'])
