@@ -61,6 +61,16 @@ def ga_auth():
 			os.remove('token.json')
 			st.session_state['token'] = None
 			print('value error')
+	elif 'token' in st.session_state:
+		try:
+			st.session_state['token'].refresh(Request())
+			print('refreshed')
+		except RefreshError:
+			st.session_state['token'] = None
+			print('refresh error')
+		except ValueError:
+			st.session_state['token'] = None
+			print('value error')
 	else:
 		code = st.experimental_get_query_params().get('code', None)
 		code = code[0] if code else None
@@ -73,6 +83,8 @@ def ga_auth():
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
+			print(token)
+			print(token.to_json())
 		st.session_state['token'] = token
 	if 'token' in locals():
 		service = build('analyticsdata', 'v1beta', credentials=token)
