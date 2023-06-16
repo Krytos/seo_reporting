@@ -2688,9 +2688,9 @@ files = [
 ]
 
 [[package]]
-name = "st_oauth"
+name = "st-oauth"
 version = "0.0.1"
-description = ""
+description = "Helper tools for connecting to data sources from Streamlit"
 category = "main"
 optional = false
 python-versions = "*"
