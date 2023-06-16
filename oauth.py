@@ -67,6 +67,8 @@ def ga_auth():
 				f.write(token.to_json())
 		except RefreshError:
 			os.remove('token.json')
+		except ValueError:
+			os.remove('token.json')
 	else:
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
