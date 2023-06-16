@@ -108,3 +108,4 @@ def ga_auth():
 def logout():
 	os.remove('token.json')
 	st.session_state['token'] = None
+	st.experimental_rerun()
