@@ -54,7 +54,10 @@ def ga_auth():
 	print(f"Session_State: {lnr(), st.session_state.get('session')}")
 	if os.path.exists('token.json'):
 		try:
-			token = Credentials.from_authorized_user_file('token.json', SCOPES)
+			with open('token.json', 'r') as f:
+				token = json.load(f)
+			print(f"token: {lnr(), token}")
+			token = Credentials.from_authorized_user_info(token, SCOPES)
 			print(f"token: {lnr(), token}")
 			token.refresh(Request())
 			print('refreshed')
