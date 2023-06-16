@@ -2,6 +2,7 @@ import os
 import json
 import streamlit as st
 
+from inspect import currentframe
 from streamlit.runtime.scriptrunner.script_runner import StopException
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.auth.transport.requests import Request
@@ -12,6 +13,8 @@ from googleapiclient.discovery import build
 from dotenv import load_dotenv, find_dotenv
 from streamlit.components.v1 import html
 from time import sleep
+
+lnr = currentframe().f_lineno
 
 load_dotenv(find_dotenv())
 
@@ -26,10 +29,11 @@ SCOPE = SCOPES[0]
 
 def open_url():
 	if "localhost" in REDIRECT_URI:
-		flow = InstalledAppFlow.from_client_config(SECRET, scopes=SCOPES)
+		secret = {'installed': SECRET['web']}
+		flow = InstalledAppFlow.from_client_config(secret, scopes=SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		print(flow.redirect_uri)
-		flow.run_local_server(host=HOST, port=PORT)
+		flow.run_local_server(port=8501)
 	else:
 		flow = Flow.from_client_config(SECRET, scopes=SCOPES)
 		flow.redirect_uri = REDIRECT_URI
@@ -43,40 +47,40 @@ def open_url():
 		print(auth_url)
 
 
-def get_credentials():
-	with open('token.json') as f:
-		token = json.load(f)
-	creds = Credentials.from_authorized_user_info(token)
-	return creds
-
-
 def ga_auth():
+	print(f"Session: {lnr, st.session_state}")
+	print(f"Session_State: {lnr, st.session_state.get('session')}")
 	if os.path.exists('token.json'):
 		try:
 			token = Credentials.from_authorized_user_file('token.json', SCOPES)
+			print(f"token: {lnr, token}")
 			token.refresh(Request())
 			print('refreshed')
 			with open('token.json', 'w') as f:
 				f.write(token.to_json())
 			st.session_state['token'] = token
+			print(f"token: {lnr, token}")
+			print(f"token: {lnr, st.session_state['token']}")
+			print(True if token == st.session_state['token'] else False)
 		except RefreshError:
 			os.remove('token.json')
 			st.session_state['token'] = None
-			print('refresh error')
+			print('refresh error', lnr)
 		except ValueError:
 			os.remove('token.json')
 			st.session_state['token'] = None
-			print('value error')
+			print('value error', lnr)
 	elif 'token' in st.session_state:
+		print(f"token: {lnr, st.session_state['token']}")
 		try:
 			st.session_state['token'].refresh(Request())
-			print('refreshed')
+			print('refreshed', lnr)
 		except RefreshError:
 			st.session_state['token'] = None
-			print('refresh error')
+			print('refresh error', lnr)
 		except ValueError:
 			st.session_state['token'] = None
-			print('value error')
+			print('value error', lnr)
 	else:
 		code = st.experimental_get_query_params().get('code', None)
 		code = code[0] if code else None
@@ -86,6 +90,10 @@ def ga_auth():
 		flow = Flow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
+		session = flow.authorized_session()
+		st.session_state['session'] = session
+		print(f"session: {lnr, session}")
+		print(f"Session_State: {lnr, st.session_state['session']}")
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())

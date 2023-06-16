@@ -1,6 +1,6 @@
 import os.path
 
-from oauth import ga_auth, get_credentials, logout
+from oauth import ga_auth, logout
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
 from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
 import json
