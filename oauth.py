@@ -74,7 +74,6 @@ def ga_auth():
 		flow = InstalledAppFlow.from_client_config(
 			SECRET, SCOPES,
 		)
-		print(code)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
 		token = flow.credentials
