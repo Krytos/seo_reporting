@@ -66,14 +66,19 @@ def ga_auth():
 			st.sidebar.button("Login", on_click=open_url)
 			while not code:
 				code = st.experimental_get_query_params().get('code', None)
-				print("Query Param: ", st.experimental_get_query_params().get('code', None))
+				print("Query Param (Get): ", st.experimental_get_query_params().get('code', None))
 				print("Code: ", code)
-		code = code[0]
+				st.experimental_set_query_params()
+				print("Query Param (Set): ", st.experimental_set_query_params())
+				print("Code 2: ", code)
+				code = code[0] if code else None
+				print("Code 3: ", code)
+				sleep(0.5)
 		flow = InstalledAppFlow.from_client_config(
 			SECRET, SCOPES,
 		)
 		flow.redirect_uri = REDIRECT_URI
-		print("Code 2: ", code)
+		print("Code 4: ", code)
 		flow.fetch_token(code=code)
 		token = flow.credentials
 		with open('token.json', 'w') as f:
