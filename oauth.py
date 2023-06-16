@@ -1,9 +1,7 @@
 import os
 import json
 import streamlit as st
-# from st_oauth import st_oauth
 
-from streamlit.web.server import Server
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow, Flow
@@ -13,25 +11,15 @@ from dotenv import load_dotenv, find_dotenv
 from streamlit.components.v1 import html
 
 load_dotenv(find_dotenv())
-# If modifying these SCOPES, delete the file token.json.
+
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SECRET = json.loads(os.getenv('SECRET'))
 HOST = os.getenv('HOST')
 PORT = int(os.getenv('PORT'))
 URI = int(os.getenv('URI'))
-# SECRET['installed']['redirect_uris'] = [f'http://{HOST}/']
-# SECRET['web']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
-
-# st_oauth(config=SECRET)
 CLIENT_ID = SECRET['web']['client_id']
 REDIRECT_URI = SECRET['web']['redirect_uris'][URI]
-print(REDIRECT_URI)
-print(type(REDIRECT_URI))
-# st.write(REDIRECT_URI)
 SCOPE = SCOPES[0]
-
-# authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
-# authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri=https://b74c-2001-9e8-245a-6300-4a-6494-ef8e-5e81.ngrok-free.app//&scope={SCOPE}&state={STATE}&access_type=offline'
 
 def open_url():
 	flow = Flow.from_client_config(
@@ -67,8 +55,10 @@ def ga_auth():
 				f.write(token.to_json())
 		except RefreshError:
 			os.remove('token.json')
+			ga_auth()
 		except ValueError:
 			os.remove('token.json')
+			ga_auth()
 	else:
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
