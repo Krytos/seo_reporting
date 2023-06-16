@@ -58,7 +58,7 @@ hostname = service.properties().batchRunReports(
 ).execute()
 
 website = hostname["reports"][0].get("rows")
-website = hostname[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if website else "N/A"
+website = website[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if website else "N/A"
 if website == "N/A":
 	st.error("Keine Daten für diese Property gefunden")
 	st.write(hostname)
