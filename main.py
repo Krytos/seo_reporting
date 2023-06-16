@@ -57,10 +57,14 @@ hostname = service.properties().batchRunReports(
 	}
 ).execute()
 
-st.write(hostname)
+
 hostname = hostname["reports"][0].get("rows")
-hostname = hostname[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0]
-website = hostname
+website = hostname[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if hostname else "N/A"
+if website == "N/A":
+	st.error("Keine Daten für diese Property gefunden")
+	st.write(hostname)
+	exit()
+
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=30))
 end_date = st.sidebar.date_input("End Date", datetime.now())
 
