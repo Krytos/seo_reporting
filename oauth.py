@@ -14,7 +14,9 @@ from dotenv import load_dotenv, find_dotenv
 from streamlit.components.v1 import html
 from time import sleep
 
-lnr = currentframe().f_lineno
+def lnr():
+	frameinfo = currentframe()
+	return frameinfo.f_back.f_lineno
 
 load_dotenv(find_dotenv())
 
@@ -49,38 +51,38 @@ def open_url():
 
 def ga_auth():
 	print(f"Session: {lnr, st.session_state}")
-	print(f"Session_State: {lnr, st.session_state.get('session')}")
+	print(f"Session_State: {lnr(), st.session_state.get('session')}")
 	if os.path.exists('token.json'):
 		try:
 			token = Credentials.from_authorized_user_file('token.json', SCOPES)
-			print(f"token: {lnr, token}")
+			print(f"token: {lnr(), token}")
 			token.refresh(Request())
 			print('refreshed')
 			with open('token.json', 'w') as f:
 				f.write(token.to_json())
 			st.session_state['token'] = token
-			print(f"token: {lnr, token}")
-			print(f"token: {lnr, st.session_state['token']}")
+			print(f"token: {lnr(), token}")
+			print(f"token: {lnr(), st.session_state['token']}")
 			print(True if token == st.session_state['token'] else False)
 		except RefreshError:
 			os.remove('token.json')
 			st.session_state['token'] = None
-			print('refresh error', lnr)
+			print('refresh error', lnr())
 		except ValueError:
 			os.remove('token.json')
 			st.session_state['token'] = None
-			print('value error', lnr)
+			print('value error', lnr())
 	elif 'token' in st.session_state:
-		print(f"token: {lnr, st.session_state['token']}")
+		print(f"token: {lnr(), st.session_state['token']}")
 		try:
 			st.session_state['token'].refresh(Request())
-			print('refreshed', lnr)
+			print('refreshed', lnr())
 		except RefreshError:
 			st.session_state['token'] = None
-			print('refresh error', lnr)
+			print('refresh error', lnr())
 		except ValueError:
 			st.session_state['token'] = None
-			print('value error', lnr)
+			print('value error', lnr())
 	else:
 		code = st.experimental_get_query_params().get('code', None)
 		code = code[0] if code else None
@@ -92,8 +94,8 @@ def ga_auth():
 		flow.fetch_token(code=code)
 		session = flow.authorized_session()
 		st.session_state['session'] = session
-		print(f"session: {lnr, session}")
-		print(f"Session_State: {lnr, st.session_state['session']}")
+		print(f"session: {lnr(), session}")
+		print(f"Session_State: {lnr(), st.session_state['session']}")
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
@@ -115,3 +117,4 @@ def ga_auth():
 
 def logout():
 	os.remove('token.json')
+	st.session_state['token'] = None
