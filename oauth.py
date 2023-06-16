@@ -67,10 +67,7 @@ def ga_auth():
 				code = st.experimental_get_query_params().get('code', None)[0]
 				st.experimental_set_query_params()
 		if not code:
-			try:
-				st.stop()
-			except StopException:
-				pass
+			st.stop()
 		flow = InstalledAppFlow.from_client_config(
 			SECRET, SCOPES,
 		)
@@ -80,8 +77,8 @@ def ga_auth():
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
 		st.experimental_rerun()
-	# if 'token' not in locals():
-	# 	ga_auth()
+	if 'token' not in locals():
+		ga_auth()
 	service = build('analyticsdata', 'v1beta', credentials=token)
 	admin_service = build('analyticsadmin', 'v1beta', credentials=token)
 	return service, admin_service
