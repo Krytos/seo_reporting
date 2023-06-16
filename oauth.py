@@ -63,9 +63,9 @@ def ga_auth():
 	else:
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
-			if st.experimental_get_query_params().get('code', None):
-				code = st.experimental_get_query_params().get('code', None)[0]
-				st.experimental_set_query_params()
+			while not code:
+				if st.experimental_get_query_params().get('code', None):
+					code = st.experimental_get_query_params().get('code', None)[0]
 		if not code:
 			st.stop()
 		flow = InstalledAppFlow.from_client_config(
