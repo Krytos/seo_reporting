@@ -37,8 +37,8 @@ REDIRECT_URI = SECRET['installed']['redirect_uris'][0]
 SCOPE = SCOPES[0]
 SESSION['state'] = "state"
 STATE = SESSION['state']
-# authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
-authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri=http://35.199.165.101:8501/&scope={SCOPE}&state={STATE}&access_type=offline'
+authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
+# authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri=https://b74c-2001-9e8-245a-6300-4a-6494-ef8e-5e81.ngrok-free.app//&scope={SCOPE}&state={STATE}&access_type=offline'
 print(authorization_endpoint)
 def open_url():
 	open_script = f"""
