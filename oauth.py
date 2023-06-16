@@ -24,9 +24,7 @@ REDIRECT_URI = SECRET['web']['redirect_uris'][URI]
 SCOPE = SCOPES[0]
 
 def open_url():
-	flow = Flow.from_client_config(
-		SECRET, scopes=SCOPES,
-	)
+	flow = Flow.from_client_config(SECRET, scopes=SCOPES)
 	flow.redirect_uri = REDIRECT_URI
 	auth_url, state = flow.authorization_url()
 	open_script = f"""
@@ -65,14 +63,12 @@ def ga_auth():
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
 			while not code:
-				st.experimental_rerun()
 				sleep(0.5)
 				code = st.experimental_get_query_params().get('code', None)
 				print(st.experimental_get_query_params())
 				code = code[0] if code else None
-		flow = InstalledAppFlow.from_client_config(
-			SECRET, SCOPES,
-		)
+				st.experimental_rerun()
+		flow = InstalledAppFlow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
 		token = flow.credentials
