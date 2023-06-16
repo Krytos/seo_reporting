@@ -2,6 +2,7 @@ import os
 import json
 import streamlit as st
 
+from streamlit.runtime.scriptrunner.script_runner import StopException
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow, Flow
@@ -55,10 +56,10 @@ def ga_auth():
 				f.write(token.to_json())
 		except RefreshError:
 			os.remove('token.json')
-			ga_auth()
+			print('refresh error')
 		except ValueError:
 			os.remove('token.json')
-			ga_auth()
+			print('value error')
 	else:
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
@@ -66,17 +67,22 @@ def ga_auth():
 				code = st.experimental_get_query_params().get('code', None)[0]
 				st.experimental_set_query_params()
 		if not code:
-			st.stop()
+			try:
+				st.stop()
+			except StopException:
+				pass
 		flow = InstalledAppFlow.from_client_config(
 			SECRET, SCOPES,
 		)
-		flow.redirect_uri = REDIRECT_URI
 		print(code)
+		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
 		st.experimental_rerun()
+	if 'token' not in locals():
+		ga_auth()
 	service = build('analyticsdata', 'v1beta', credentials=token)
 	admin_service = build('analyticsadmin', 'v1beta', credentials=token)
 	return service, admin_service
