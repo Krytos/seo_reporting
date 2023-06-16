@@ -60,14 +60,11 @@ def ga_auth():
 			os.remove('token.json')
 			print('value error')
 	else:
+		code = st.experimental_get_query_params().get('code', None)
+		code = code[0] if code else None
 		if not code:
 			st.sidebar.button("Login", on_click=open_url)
-			while not code:
-				sleep(0.5)
-				code = st.experimental_get_query_params().get('code', None)
-				print(st.experimental_get_query_params())
-				code = code[0] if code else None
-				st.experimental_rerun()
+			st.stop()
 		flow = InstalledAppFlow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
