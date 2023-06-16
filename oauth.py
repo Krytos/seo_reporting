@@ -83,7 +83,6 @@ def ga_auth():
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
-		st.experimental_rerun()
 	if 'token' in locals():
 		service = build('analyticsdata', 'v1beta', credentials=token)
 		admin_service = build('analyticsadmin', 'v1beta', credentials=token)
