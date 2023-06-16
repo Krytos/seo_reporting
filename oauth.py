@@ -12,42 +12,40 @@ from googleapiclient.discovery import build
 from dotenv import load_dotenv, find_dotenv
 from streamlit.components.v1 import html
 
-SESSION = {}
-
-try:
-	with open('secrets.json') as f:
-		SESSION = json.load(f)
-except FileNotFoundError:
-	with open('secrets.json', 'w') as f:
-		json.dump(SESSION, f)
-
 load_dotenv(find_dotenv())
 # If modifying these SCOPES, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
 SECRET = json.loads(os.getenv('SECRET'))
 HOST = os.getenv('HOST')
 PORT = int(os.getenv('PORT'))
+URI = int(os.getenv('URI'))
 # SECRET['installed']['redirect_uris'] = [f'http://{HOST}/']
-SECRET['installed']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
+# SECRET['web']['redirect_uris'] = [f'http://{HOST}:{PORT}/']
 
 # st_oauth(config=SECRET)
-CLIENT_ID = SECRET['installed']['client_id']
-REDIRECT_URI = SECRET['installed']['redirect_uris'][0]
+CLIENT_ID = SECRET['web']['client_id']
+REDIRECT_URI = SECRET['web']['redirect_uris'][URI]
+print(REDIRECT_URI)
+print(type(REDIRECT_URI))
 # st.write(REDIRECT_URI)
 SCOPE = SCOPES[0]
-SESSION['state'] = "state"
-STATE = SESSION['state']
-authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
+
+# authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&scope={SCOPE}&state={STATE}&access_type=offline'
 # authorization_endpoint = f'https://accounts.google.com/o/oauth2/auth?response_type=code&client_id={CLIENT_ID}&redirect_uri=https://b74c-2001-9e8-245a-6300-4a-6494-ef8e-5e81.ngrok-free.app//&scope={SCOPE}&state={STATE}&access_type=offline'
 
 def open_url():
+	flow = Flow.from_client_config(
+		SECRET, scopes=SCOPES,
+	)
+	flow.redirect_uri = REDIRECT_URI
+	auth_url, state = flow.authorization_url()
 	open_script = f"""
         <script type="text/javascript">
-            window.open('{authorization_endpoint}', '_blank').focus();
+            window.open('{auth_url}', '_blank').focus();
         </script>
     """
 	html(open_script)
-	print(authorization_endpoint)
+	print(auth_url)
 
 
 def get_credentials():
