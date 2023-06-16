@@ -5,7 +5,7 @@ import streamlit as st
 from inspect import currentframe
 from streamlit.runtime.scriptrunner.script_runner import StopException
 from google.analytics.data_v1beta import BetaAnalyticsDataClient
-from google.auth.transport.requests import Request
+from google.auth.transport.requests import Request, AuthorizedSession
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow, Flow
 from google.auth.exceptions import RefreshError
@@ -57,16 +57,17 @@ def ga_auth():
 			with open('token.json', 'r') as f:
 				token = json.load(f)
 			print(f"token: {lnr(), token}")
-			token = Credentials.from_authorized_user_info(token, SCOPES)
-			print(f"token: {lnr(), token}")
-			token.refresh(Request())
-			print('refreshed')
+			token = Credentials(
+				token['token'],
+				refresh_token=token['refresh_token'],
+				token_uri=token['token_uri'],
+				client_id=token['client_id'],
+				client_secret=token['client_secret']
+			)
+			session = AuthorizedSession(token)
 			with open('token.json', 'w') as f:
 				f.write(token.to_json())
 			st.session_state['token'] = token
-			print(f"token: {lnr(), token}")
-			print(f"token: {lnr(), st.session_state['token']}")
-			print(True if token == st.session_state['token'] else False)
 		except RefreshError:
 			os.remove('token.json')
 			st.session_state['token'] = None
@@ -78,7 +79,8 @@ def ga_auth():
 	elif 'token' in st.session_state:
 		print(f"token: {lnr(), st.session_state['token']}")
 		try:
-			st.session_state['token'].refresh(Request())
+			token = st.session_state['token']
+			session = AuthorizedSession(token)
 			print('refreshed', lnr())
 		except RefreshError:
 			st.session_state['token'] = None
@@ -95,10 +97,10 @@ def ga_auth():
 		flow = Flow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
 		flow.fetch_token(code=code)
-		session = flow.authorized_session()
-		st.session_state['session'] = session
-		print(f"session: {lnr(), session}")
-		print(f"Session_State: {lnr(), st.session_state['session']}")
+		# session = flow.authorized_session()
+		# st.session_state['session'] = session
+		# print(f"session: {lnr(), session}")
+		# print(f"Session_State: {lnr(), st.session_state['session']}")
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
@@ -106,11 +108,13 @@ def ga_auth():
 			print(token.to_json())
 		st.session_state['token'] = token
 	if 'token' in locals():
+		print(f"token: {lnr(), token}")
 		service = build('analyticsdata', 'v1beta', credentials=token)
 		admin_service = build('analyticsadmin', 'v1beta', credentials=token)
 		beta_client = BetaAnalyticsDataClient(credentials=token)
 		return service, admin_service, beta_client
 	elif 'token' in st.session_state:
+		print(f"token: {lnr(), st.session_state['token']}")
 		service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'])
 		admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'])
 		beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'])
