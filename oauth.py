@@ -87,11 +87,16 @@ def ga_auth():
 			st.stop()
 		flow = Flow.from_client_config(SECRET, SCOPES)
 		flow.redirect_uri = REDIRECT_URI
-		flow.fetch_token(code=code)
+		try:
+			flow.fetch_token(code=code)
+		except Exception as e:
+			open_url()
+			st.experimental_rerun()
 		token = flow.credentials
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
 		st.session_state['token'] = token
+		st.experimental_set_query_params()
 	if 'token' in locals():
 		service = build('analyticsdata', 'v1beta', credentials=token)
 		admin_service = build('analyticsadmin', 'v1beta', credentials=token)
