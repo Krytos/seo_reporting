@@ -46,9 +46,14 @@ def open_url():
 	        </script>
 	    """
 		html(open_script)
-		print(auth_url)
 
-
+def close_window():
+	close_script = """
+	    <script type="text/javascript">
+	        window.close();
+	    </script>
+	"""
+	html(close_script)
 def ga_auth():
 	if os.path.exists('token.json'):
 		try:
@@ -96,7 +101,9 @@ def ga_auth():
 		with open('token.json', 'w') as f:
 			f.write(token.to_json())
 		st.session_state['token'] = token
-		st.experimental_set_query_params()
+		close_window()
+		st.experimental_rerun()
+		# st.experimental_set_query_params()
 	if 'token' in locals():
 		service = build('analyticsdata', 'v1beta', credentials=token)
 		admin_service = build('analyticsadmin', 'v1beta', credentials=token)
