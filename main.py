@@ -393,7 +393,7 @@ def main():
         date = datetime.fromtimestamp(average_session_duration)
         st.write(
             f"{average_session_duration} - {average_session_duration_compare or 0} - "
-            f"{average_session_duration - average_session_duration_compare or 0}"
+            f"{average_session_duration - (average_session_duration_compare or 0)}"
         )
         date_compare = (
             datetime.fromtimestamp(average_session_duration - average_session_duration_compare) if compare else None
