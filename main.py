@@ -233,7 +233,7 @@ def main():
 	screen_page_views = int(df_date["screenPageViews"].sum())
 	screen_page_views_per_session = df_date["screenPageViewsPerSession"].mean()
 	average_session_duration = df_date["averageSessionDuration"].mean()
-	bounce_rate = round(df_date["bounceRate"].mean(), 4)*100
+	bounce_rate = round(df_date["bounceRate"].mean() * 100, 2)
 
 	try:
 		total_users_compare = int(df_date_compare["totalUsers"].sum())
