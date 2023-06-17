@@ -104,7 +104,7 @@ for month in range(compare_start_date.month, end_date.month + 1):
 		compare_max_days = day
 		compare_max_month = month
 
-month_name = f"{datetime(compare_start_date.year, compare_max_month, 1).strftime('%B')} - {datetime(end_date.year, max_month, 1).strftime('%B')}" if compare else datetime(
+month_name = f"{datetime(compare_start_date.year, compare_max_month, 1).strftime('%B')} - {datetime(end_date.year, max_month, 1).strftime('%B')}" or datetime(
 	start_date.year, max_month, 1
 ).strftime('%B')
 
@@ -333,21 +333,21 @@ def main():
 		# st.line_chart(df_date, use_container_width=True, y=["totalUsers", "sessions", "newUsers"], x="date")
 
 		col1, col2, col3, col4 = st.columns(4)
-		col1.metric(label="Nutzer", value=total_users, delta=total_users_compare if compare else None)
-		col2.metric(label="Neue Nutzer", value=new_users, delta=new_users_compare if compare else None)
-		col3.metric(label="Sitzungen", value=sessions, delta=sessions_compare if compare else None)
-		col4.metric(label="Seitenaufrufe", value=screen_page_views, delta=screen_page_views_compare if compare else None)
+		col1.metric(label="Nutzer", value=total_users, delta=total_users_compare or None)
+		col2.metric(label="Neue Nutzer", value=new_users, delta=new_users_compare or None)
+		col3.metric(label="Sitzungen", value=sessions, delta=sessions_compare or None)
+		col4.metric(label="Seitenaufrufe", value=screen_page_views, delta=screen_page_views_compare or None)
 		col1.metric(label="Durchschnittliche Sitzungsdauer",
 		            value=datetime.fromtimestamp(average_session_duration).strftime('%M:%S'),
-		            delta=datetime.fromtimestamp(average_session_duration_compare).strftime('%M:%S') if compare else None)
+		            delta=datetime.fromtimestamp(average_session_duration_compare).strftime('%M:%S') or None)
 		col2.metric(label="Absprungrate", value=str(bounce_rate) + "%",
-		            delta=bounce_rate_compare if compare else None, delta_color="inverse")
+		            delta=bounce_rate_compare + "%" or None, delta_color="inverse")
 		col3.metric(label="Seiten/Sitzungen",
 		            value=screen_page_views_per_session,
-		            delta=screen_page_views_per_session_compare if compare else None)
+		            delta=screen_page_views_per_session_compare or None)
 		col4.metric(label="Anzahl der Sitzungen pro Nutzer",
 		            value=sessions_per_user,
-		            delta=sessions_per_user_compare if compare else None)
+		            delta=sessions_per_user_compare or None)
 	with st.container():
 		st.header("2 - Geografische Merkmale")
 		st.subheader("a) Begriffserläuterung")
