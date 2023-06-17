@@ -332,7 +332,16 @@ def main():
 	        """
 		)
 		st.subheader("c) Visualisierung ")
-		st.line_chart(df_date, use_container_width=True, y=["totalUsers", "sessions", "newUsers"], x="date")
+		# st.line_chart(df_date, use_container_width=True, y=["totalUsers", "sessions", "newUsers"], x="date")
+
+		st.metric(label="Nutzer", value=total_users, delta=calculate_change(total_users_compare, total_users))
+		st.metric(label="Neue Nutzer", value=new_users, delta=calculate_change(new_users_compare, new_users))
+		st.metric(label="Sitzungen", value=sessions, delta=calculate_change(sessions_compare, sessions))
+		st.metric(label="Seitenaufrufe", value=screen_page_views, delta=calculate_change(screen_page_views_compare, screen_page_views))
+		st.metric(label="Durchschnittliche Sitzungsdauer", value=datetime.fromtimestamp(average_session_duration).strftime('%M:%S'), delta=calculate_change(average_session_duration_compare, average_session_duration))
+		st.metric(label="Absprungrate", value=str(bounce_rate) + "%", delta=calculate_change(bounce_rate_compare, bounce_rate, "bounce"), delta_color="inverse")
+		st.metric(label="Seiten/Sitzungen", value=screen_page_views_per_session, delta=calculate_change(screen_page_views_per_session_compare, screen_page_views_per_session))
+		st.metric(label="Anzahl der Sitzungen pro Nutzer", value=sessions_per_user, delta=calculate_change(sessions_per_user_compare, sessions_per_user))
 
 	with st.container():
 		st.header("2 - Geografische Merkmale")
