@@ -34,9 +34,7 @@ if not os.path.exists('token.json'):
 try:
     accounts_list = admin_service.accountSummaries().list().execute()
     account_name = accounts_list["accountSummaries"][0]["account"]
-    account_properties = [
-        prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]
-    ]
+    account_properties = [prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]]
 except Exception as e:
     st.error("Keine Rechte zum Aufrufen der Daten: " + str(e))
     exit()
@@ -68,9 +66,7 @@ hostname = (
 )
 
 website = hostname["reports"][0].get("rows")
-website = (
-    website[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if website else "N/A"
-)
+website = website[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if website else "N/A"
 if website == "N/A":
     st.error("Keine Daten für diese Property gefunden")
     st.write(hostname)
@@ -85,12 +81,8 @@ if start_date > end_date or (start_date or end_date) > datetime.date(datetime.no
 compare = st.sidebar.checkbox("Compare to previous period")
 
 if compare:
-    compare_start_date: datetime = st.sidebar.date_input(
-        "Compare Start Date", start_date - timedelta(days=30)
-    )
-    compare_end_date: datetime = st.sidebar.date_input(
-        "Compare End Date", end_date - timedelta(days=30)
-    )
+    compare_start_date: datetime = st.sidebar.date_input("Compare Start Date", start_date - timedelta(days=30))
+    compare_end_date: datetime = st.sidebar.date_input("Compare End Date", end_date - timedelta(days=30))
     compare_start_date_str: str = compare_start_date.strftime("%Y-%m-%d")
     compare_end_date_str: str = compare_end_date.strftime("%Y-%m-%d")
 else:
@@ -204,11 +196,7 @@ def main():
             # Define the request
             request_compare = RunReportRequest(
                 property=f"properties/{property_id}",
-                date_ranges=[
-                    DateRange(
-                        start_date=compare_start_date_str, end_date=compare_end_date_str
-                    )
-                ],
+                date_ranges=[DateRange(start_date=compare_start_date_str, end_date=compare_end_date_str)],
                 dimensions=[Dimension(name=dimension)],
                 metrics=metrics,
             )
@@ -221,10 +209,7 @@ def main():
                 data_compare = []
                 for row in response_compare.rows:
                     data_compare.append(
-                        [
-                            datetime.fromisoformat(value.value)
-                            for value in row.dimension_values
-                        ]
+                        [datetime.fromisoformat(value.value) for value in row.dimension_values]
                         + [round(float(value.value), 2) for value in row.metric_values]
                     )
                 df_date_compare = pd.DataFrame(
@@ -241,10 +226,7 @@ def main():
         for row in response.rows:
             if dimension == "date":
                 data.append(
-                    [
-                        datetime.fromisoformat(value.value)
-                        for value in row.dimension_values
-                    ]
+                    [datetime.fromisoformat(value.value) for value in row.dimension_values]
                     + [round(float(value.value), 2) for value in row.metric_values]
                 )
             else:
@@ -254,44 +236,28 @@ def main():
                 )
 
         if dimension == "city":
-            df_city = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_city = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_city = df_city.sort_values(by="totalUsers", ascending=False)
         elif dimension == "PagePath":
-            df_page = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_page = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_page = df_page.sort_values(by="totalUsers", ascending=False)
         elif dimension == "landingPage":
-            df_landing = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_landing = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_landing = df_landing.sort_values(by="totalUsers", ascending=False)
         elif dimension == "sessionDefaultChannelGroup":
-            df_channel = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_channel = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_channel = df_channel.sort_values(by="totalUsers", ascending=False)
         elif dimension == "country":
-            df_country = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_country = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_country = df_country.sort_values(by="totalUsers", ascending=False)
         elif dimension == "language":
-            df_language = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_language = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_language = df_language.sort_values(by="totalUsers", ascending=False)
         elif dimension == "deviceCategory":
-            df_device = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_device = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             df_device = df_device.sort_values(by="totalUsers", ascending=False)
         elif dimension == "date":
-            df_date = pd.DataFrame(
-                data, columns=[dimension] + [metric.name for metric in metrics]
-            )
+            df_date = pd.DataFrame(data, columns=[dimension] + [metric.name for metric in metrics])
             print(df_date)
             df_date = df_date.sort_values(by="date", ascending=True)
 
@@ -300,9 +266,7 @@ def main():
     sessions = int(df_date["sessions"].sum())
     sessions_per_user = round(df_date["sessionsPerUser"].mean(), 2)
     screen_page_views = int(df_date["screenPageViews"].sum())
-    screen_page_views_per_session = round(
-        df_date["screenPageViewsPerSession"].mean(), 2
-    )
+    screen_page_views_per_session = round(df_date["screenPageViewsPerSession"].mean(), 2)
     average_session_duration = df_date["averageSessionDuration"].mean()
     bounce_rate = round(df_date["bounceRate"].mean() * 100, 2)
 
@@ -312,12 +276,8 @@ def main():
         sessions_compare = int(df_date_compare["sessions"].sum())
         sessions_per_user_compare = round(df_date_compare["sessionsPerUser"].mean(), 2)
         screen_page_views_compare = int(df_date_compare["screenPageViews"].sum())
-        screen_page_views_per_session_compare = round(
-            df_date_compare["screenPageViewsPerSession"].mean(), 2
-        )
-        average_session_duration_compare = df_date_compare[
-            "averageSessionDuration"
-        ].mean()
+        screen_page_views_per_session_compare = round(df_date_compare["screenPageViewsPerSession"].mean(), 2)
+        average_session_duration_compare = df_date_compare["averageSessionDuration"].mean()
         bounce_rate_compare = round(df_date_compare["bounceRate"].mean() * 100, 2)
     except NameError:
         total_users_compare = None
@@ -428,17 +388,13 @@ def main():
         col4.metric(
             label="Seitenaufrufe",
             value=screen_page_views,
-            delta=str(screen_page_views - screen_page_views_compare)
-            if compare
-            else None,
+            delta=str(screen_page_views - screen_page_views_compare) if compare else None,
         )
         date = datetime.fromtimestamp(average_session_duration)
+        st.write(f"{average_session_duration} - {average_session_duration_compare} - "
+                 f"{average_session_duration - average_session_duration_compare}")
         date_compare = (
-            datetime.fromtimestamp(
-                average_session_duration - average_session_duration_compare
-            )
-            if compare
-            else None
+            datetime.fromtimestamp(average_session_duration - average_session_duration_compare) if compare else None
         )
         col1.metric(
             label="Durchschnittliche Sitzungsdauer",
@@ -454,18 +410,12 @@ def main():
         col3.metric(
             label="Seiten/Sitzungen",
             value=screen_page_views_per_session,
-            delta=str(
-                screen_page_views_per_session - screen_page_views_per_session_compare
-            )
-            if compare
-            else None,
+            delta=str(screen_page_views_per_session - screen_page_views_per_session_compare) if compare else None,
         )
         col4.metric(
             label="Anzahl der Sitzungen pro Nutzer",
             value=sessions_per_user,
-            delta=str(sessions_per_user - sessions_per_user_compare)
-            if compare
-            else None,
+            delta=str(sessions_per_user - sessions_per_user_compare) if compare else None,
         )
     with st.container():
         st.header("2 - Geografische Merkmale")
@@ -554,9 +504,7 @@ def main():
         )
 
         st.subheader("c) Visualisierung ")
-        st.bar_chart(
-            df_device, y=["sessions"], x="deviceCategory", use_container_width=True
-        )
+        st.bar_chart(df_device, y=["sessions"], x="deviceCategory", use_container_width=True)
 
     # with st.container():
     # 	st.header("5) - DURATION")
