@@ -229,9 +229,9 @@ def main():
 	total_users = int(df_date["totalUsers"].sum())
 	new_users = int(df_date["newUsers"].sum())
 	sessions = int(df_date["sessions"].sum())
-	sessions_per_user = df_date["sessionsPerUser"].mean()
+	sessions_per_user = round(df_date["sessionsPerUser"].mean(), 2)
 	screen_page_views = int(df_date["screenPageViews"].sum())
-	screen_page_views_per_session = df_date["screenPageViewsPerSession"].mean()
+	screen_page_views_per_session = round(df_date["screenPageViewsPerSession"].mean(), 2)
 	average_session_duration = df_date["averageSessionDuration"].mean()
 	bounce_rate = round(df_date["bounceRate"].mean() * 100, 2)
 
@@ -239,11 +239,11 @@ def main():
 		total_users_compare = int(df_date_compare["totalUsers"].sum())
 		new_users_compare = int(df_date_compare["newUsers"].sum())
 		sessions_compare = int(df_date_compare["sessions"].sum())
-		sessions_per_user_compare = df_date_compare["sessionsPerUser"].mean()
+		sessions_per_user_compare = round(df_date_compare["sessionsPerUser"].mean(), 2)
 		screen_page_views_compare = int(df_date_compare["screenPageViews"].sum())
-		screen_page_views_per_session_compare = df_date_compare["screenPageViewsPerSession"].mean()
+		screen_page_views_per_session_compare = round(df_date_compare["screenPageViewsPerSession"].mean(), 2)
 		average_session_duration_compare = df_date_compare["averageSessionDuration"].mean()
-		bounce_rate_compare = round(df_date_compare["bounceRate"].mean(), 2)
+		bounce_rate_compare = round(df_date_compare["bounceRate"].mean() * 100, 2)
 	except NameError:
 		total_users_compare = None
 		new_users_compare = None
@@ -337,9 +337,13 @@ def main():
 		col2.metric(label="Neue Nutzer", value=new_users, delta=new_users_compare)
 		col3.metric(label="Sitzungen", value=sessions, delta=sessions_compare)
 		col4.metric(label="Seitenaufrufe", value=screen_page_views, delta=screen_page_views_compare)
-		col1.metric(label="Durchschnittliche Sitzungsdauer", value=datetime.fromtimestamp(average_session_duration).strftime('%M:%S'), delta=average_session_duration_compare)
+		col1.metric(label="Durchschnittliche Sitzungsdauer",
+		            value=datetime.fromtimestamp(average_session_duration).strftime('%M:%S'),
+		            delta=datetime.fromtimestamp(average_session_duration_compare).strftime('%M:%S'))
 		col2.metric(label="Absprungrate", value=str(bounce_rate) + "%", delta=bounce_rate_compare, delta_color="inverse")
-		col3.metric(label="Seiten/Sitzungen", value=screen_page_views_per_session, delta=screen_page_views_per_session_compare)
+		col3.metric(label="Seiten/Sitzungen",
+		            value=screen_page_views_per_session,
+		            delta=screen_page_views_per_session_compare)
 		col4.metric(label="Anzahl der Sitzungen pro Nutzer", value=sessions_per_user, delta=sessions_per_user_compare)
 	with st.container():
 		st.header("2 - Geografische Merkmale")
