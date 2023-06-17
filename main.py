@@ -391,12 +391,8 @@ def main():
             delta=str(screen_page_views - screen_page_views_compare) if compare else None,
         )
         date = datetime.fromtimestamp(average_session_duration)
-        date_compare = datetime.fromtimestamp(average_session_duration_compare)
-        date_delta = (
-            (date - date_compare if date >= date_compare else date_compare - date)
-            if compare
-            else None
-        )
+        date_compare = datetime.fromtimestamp(average_session_duration_compare) if compare else None
+        date_delta = (date - date_compare if date >= date_compare else date_compare - date) if compare else None
         col1.metric(
             label="Durchschnittliche Sitzungsdauer",
             value=date.strftime('%M:%S'),
