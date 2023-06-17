@@ -341,7 +341,7 @@ def main():
 		            value=datetime.fromtimestamp(average_session_duration).strftime('%M:%S'),
 		            delta=datetime.fromtimestamp(average_session_duration_compare).strftime('%M:%S') if compare else None)
 		col2.metric(label="Absprungrate", value=str(bounce_rate) + "%",
-		            delta=bounce_rate_compare + "%" if compare else None, delta_color="inverse")
+		            delta=f"{bounce_rate_compare} %" if compare else None, delta_color="inverse")
 		col3.metric(label="Seiten/Sitzungen",
 		            value=screen_page_views_per_session,
 		            delta=screen_page_views_per_session_compare if compare else None)
