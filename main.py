@@ -1,12 +1,9 @@
 import os.path
-
-from oauth import ga_auth, logout
-from google.analytics.data_v1beta import BetaAnalyticsDataClient
-from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
-import json
+# import locale
 import pandas as pd
 import calendar
-import locale
+from oauth import ga_auth, logout
+from google.analytics.data_v1beta.types import DateRange, Dimension, Metric, RunReportRequest
 from datetime import timedelta, datetime
 import streamlit as st
 
@@ -115,9 +112,9 @@ start_date_str = start_date.strftime("%Y-%m-%d")
 end_date_str = end_date.strftime("%Y-%m-%d")
 
 
-def calculate_change(compare, current, data=None):
+def calculate_change(comp, current, data=None):
 	try:
-		change = round((100.0 / float(compare) * float(current)) - 100, 2)
+		change = round((100.0 / float(comp) * float(current)) - 100, 2)
 	except ZeroDivisionError:
 		change = 0
 	except TypeError:
@@ -139,7 +136,8 @@ def calculate_change(compare, current, data=None):
 # noinspection PyTypeChecker
 def main():
 	# Define the request
-	metrics = [Metric(name="totalUsers"),  # Nutzer
+	metrics = [
+			Metric(name="totalUsers"),  # Nutzer
 			Metric(name="newUsers"),  # Neue Nutzer
 			Metric(name="sessions"),  # Sitzungen
 			Metric(name="sessionsPerUser"),  # Anzahl der Sitzungen pro Nutzer
@@ -235,7 +233,7 @@ def main():
 	screen_page_views = int(df_date["screenPageViews"].sum())
 	screen_page_views_per_session = df_date["screenPageViewsPerSession"].mean()
 	average_session_duration = df_date["averageSessionDuration"].mean()
-	bounce_rate = round(df_date["bounceRate"].mean(), 2)
+	bounce_rate = round(df_date["bounceRate"].mean(), 4)*100
 
 	try:
 		total_users_compare = int(df_date_compare["totalUsers"].sum())
