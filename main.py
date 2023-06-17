@@ -72,10 +72,10 @@ if start_date > end_date or (start_date or end_date) > datetime.date(datetime.no
 compare = st.sidebar.checkbox("Compare to previous period")
 
 if compare:
-	compare_start_date = st.sidebar.date_input("Compare Start Date", start_date - timedelta(days=30))
-	compare_end_date = st.sidebar.date_input("Compare End Date", end_date - timedelta(days=30))
-	compare_start_date_str = compare_start_date.strftime("%Y-%m-%d")
-	compare_end_date_str = compare_end_date.strftime("%Y-%m-%d")
+	compare_start_date: datetime = st.sidebar.date_input("Compare Start Date", start_date - timedelta(days=30))
+	compare_end_date: datetime = st.sidebar.date_input("Compare End Date", end_date - timedelta(days=30))
+	compare_start_date_str: str = compare_start_date.strftime("%Y-%m-%d")
+	compare_end_date_str: str = compare_end_date.strftime("%Y-%m-%d")
 else:
 	compare_start_date = start_date
 	compare_end_date = end_date
@@ -342,7 +342,7 @@ def main():
 		col4.metric(label="Seitenaufrufe", value=screen_page_views,
 		            delta=str(screen_page_views_compare-screen_page_views) if compare else None)
 		date = datetime.fromtimestamp(average_session_duration)
-		date_compare = datetime.fromtimestamp(average_session_duration_compare-average_session_duration)
+		date_compare = datetime.fromtimestamp(average_session_duration_compare-average_session_duration) if compare else None
 		col1.metric(label="Durchschnittliche Sitzungsdauer",
 		            value=date.strftime('%M:%S'), delta=date_compare.strftime('%M:%S') if compare else None)
 		col2.metric(label="Absprungrate", value=str(bounce_rate) + "%",
