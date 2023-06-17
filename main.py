@@ -333,18 +333,21 @@ def main():
 		# st.line_chart(df_date, use_container_width=True, y=["totalUsers", "sessions", "newUsers"], x="date")
 
 		col1, col2, col3, col4 = st.columns(4)
-		col1.metric(label="Nutzer", value=total_users, delta=total_users_compare)
-		col2.metric(label="Neue Nutzer", value=new_users, delta=new_users_compare)
-		col3.metric(label="Sitzungen", value=sessions, delta=sessions_compare)
-		col4.metric(label="Seitenaufrufe", value=screen_page_views, delta=screen_page_views_compare)
+		col1.metric(label="Nutzer", value=total_users, delta=total_users_compare if compare else ...)
+		col2.metric(label="Neue Nutzer", value=new_users, delta=new_users_compare if compare else ...)
+		col3.metric(label="Sitzungen", value=sessions, delta=sessions_compare if compare else ...)
+		col4.metric(label="Seitenaufrufe", value=screen_page_views, delta=screen_page_views_compare if compare else ...)
 		col1.metric(label="Durchschnittliche Sitzungsdauer",
 		            value=datetime.fromtimestamp(average_session_duration).strftime('%M:%S'),
-		            delta=datetime.fromtimestamp(average_session_duration_compare).strftime('%M:%S'))
-		col2.metric(label="Absprungrate", value=str(bounce_rate) + "%", delta=bounce_rate_compare, delta_color="inverse")
+		            delta=datetime.fromtimestamp(average_session_duration_compare).strftime('%M:%S') if compare else ...)
+		col2.metric(label="Absprungrate", value=str(bounce_rate) + "%",
+		            delta=bounce_rate_compare if compare else ..., delta_color="inverse")
 		col3.metric(label="Seiten/Sitzungen",
 		            value=screen_page_views_per_session,
-		            delta=screen_page_views_per_session_compare)
-		col4.metric(label="Anzahl der Sitzungen pro Nutzer", value=sessions_per_user, delta=sessions_per_user_compare)
+		            delta=screen_page_views_per_session_compare if compare else ...)
+		col4.metric(label="Anzahl der Sitzungen pro Nutzer",
+		            value=sessions_per_user,
+		            delta=sessions_per_user_compare if compare else ...)
 	with st.container():
 		st.header("2 - Geografische Merkmale")
 		st.subheader("a) Begriffserläuterung")
