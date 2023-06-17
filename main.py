@@ -391,17 +391,14 @@ def main():
             delta=str(screen_page_views - screen_page_views_compare) if compare else None,
         )
         date = datetime.fromtimestamp(average_session_duration)
-        st.write(
-            f"{average_session_duration} - {average_session_duration_compare or 0} - "
-            f"{average_session_duration - (average_session_duration_compare or 0)}"
-        )
-        date_compare = (
-            datetime.fromtimestamp(average_session_duration - average_session_duration_compare) if compare else None
-        )
+        date_compare = datetime.fromtimestamp(average_session_duration_compare)
+        date_delta = datetime(
+                f"+{date - date_compare}" if date >= date_compare else f"-{date_compare - date}"
+        ) if compare else None
         col1.metric(
             label="Durchschnittliche Sitzungsdauer",
             value=date.strftime('%M:%S'),
-            delta=date_compare.strftime('%M:%S') if compare else None,
+            delta=date_delta.strftime('%M:%S') if compare else None,
         )
         col2.metric(
             label="Absprungrate",
