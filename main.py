@@ -391,8 +391,10 @@ def main():
             delta=str(screen_page_views - screen_page_views_compare) if compare else None,
         )
         date = datetime.fromtimestamp(average_session_duration)
-        st.write(f"{average_session_duration} - {average_session_duration_compare} - "
-                 f"{average_session_duration - average_session_duration_compare}")
+        st.write(
+            f"{average_session_duration} - {average_session_duration_compare or 0} - "
+            f"{average_session_duration - average_session_duration_compare or 0}"
+        )
         date_compare = (
             datetime.fromtimestamp(average_session_duration - average_session_duration_compare) if compare else None
         )
