@@ -51,29 +51,69 @@ def open_url():
         html(open_script)
 
 
+# def ga_auth():
+#     if os.path.exists('token.json'):
+#         try:
+#             with open('token.json', 'r') as f:
+#                 token = json.load(f)
+#             token = Credentials(
+#                 token['token'],
+#                 token_uri=token['token_uri'],
+#                 client_id=token['client_id'],
+#                 client_secret=token['client_secret'],
+#                 scopes=token['scopes'],
+#             )
+#             st.session_state['state'] = AuthorizedSession(token)
+#             with open('token.json', 'w') as f:
+#                 f.write(token.to_json())
+#             st.session_state['token'] = token
+#         except RefreshError:
+#             os.remove('token.json')
+#             st.session_state['token'] = None
+#         except ValueError:
+#             os.remove('token.json')
+#             st.session_state['token'] = None
+#     elif 'token' in st.session_state:
+#         try:
+#             token = st.session_state['token']
+#             st.session_state['state'] = AuthorizedSession(token)
+#         except RefreshError:
+#             st.session_state['token'] = None
+#         except ValueError:
+#             st.session_state['token'] = None
+#     else:
+#         code = st.experimental_get_query_params().get('code', None)
+#         code = code[0] if code else None
+#         if not code:
+#             st.sidebar.button("Login", on_click=open_url)
+#             st.stop()
+#         flow = Flow.from_client_config(SECRET, SCOPES)
+#         flow.redirect_uri = REDIRECT_URI
+#         try:
+#             flow.fetch_token(code=code)
+#         except Exception as e:
+#             open_url()
+#             st.experimental_rerun()
+#         token = flow.credentials
+#         with open('token.json', 'w') as f:
+#             f.write(token.to_json())
+#         st.session_state['token'] = token
+#         st.experimental_set_query_params()
+#     if 'token' in locals():
+#         service = build('analyticsdata', 'v1beta', credentials=token)
+#         admin_service = build('analyticsadmin', 'v1beta', credentials=token)
+#         beta_client = BetaAnalyticsDataClient(credentials=token)
+#         return service, admin_service, beta_client
+#     elif 'token' in st.session_state:
+#         service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'])
+#         admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'])
+#         beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'])
+#         return service, admin_service, beta_client
+#     else:
+#         st.experimental_rerun()
+
 def ga_auth():
-    if os.path.exists('token.json'):
-        try:
-            with open('token.json', 'r') as f:
-                token = json.load(f)
-            token = Credentials(
-                token['token'],
-                token_uri=token['token_uri'],
-                client_id=token['client_id'],
-                client_secret=token['client_secret'],
-                scopes=token['scopes'],
-            )
-            st.session_state['state'] = AuthorizedSession(token)
-            with open('token.json', 'w') as f:
-                f.write(token.to_json())
-            st.session_state['token'] = token
-        except RefreshError:
-            os.remove('token.json')
-            st.session_state['token'] = None
-        except ValueError:
-            os.remove('token.json')
-            st.session_state['token'] = None
-    elif 'token' in st.session_state:
+    if 'token' in st.session_state:
         try:
             token = st.session_state['token']
             st.session_state['state'] = AuthorizedSession(token)
@@ -95,22 +135,13 @@ def ga_auth():
             open_url()
             st.experimental_rerun()
         token = flow.credentials
-        with open('token.json', 'w') as f:
-            f.write(token.to_json())
         st.session_state['token'] = token
+        st.session_state['state'] = AuthorizedSession(token)
         st.experimental_set_query_params()
-    if 'token' in locals():
-        service = build('analyticsdata', 'v1beta', credentials=token)
-        admin_service = build('analyticsadmin', 'v1beta', credentials=token)
-        beta_client = BetaAnalyticsDataClient(credentials=token)
-        return service, admin_service, beta_client
-    elif 'token' in st.session_state:
-        service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'])
-        admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'])
-        beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'])
-        return service, admin_service, beta_client
-    else:
-        st.experimental_rerun()
+    service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'] or token)
+    admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'] or token)
+    beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'] or token)
+    return service, admin_service, beta_client
 
 
 def logout():
