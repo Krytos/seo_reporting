@@ -126,7 +126,7 @@ def ga_auth():
         code = code[0] if code else None
         if not code:
             st.sidebar.button("Login", on_click=open_url)
-            st.stop()
+            st.experimental_rerun()
         flow = Flow.from_client_config(SECRET, SCOPES)
         flow.redirect_uri = REDIRECT_URI
         try:
