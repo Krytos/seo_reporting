@@ -70,7 +70,8 @@ website = hostname["reports"][0].get("rows")
 website = website[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if website else "N/A"
 if website == "N/A":
     st.error("Keine Daten für diese Property gefunden. Bitte stellen Sie sicher, dass sie die nötigen Tags auf Ihrer "
-             "Website installiert haben und GA4 benutzen.")
+             "Website installiert haben und GA4 benutzen. Falls Sie Hilfe mit der Installation brauchen, wenden Sie "
+             "sich bitte an diese Erklärung von Google: https://support.google.com/tagmanager/answer/9442095?hl=en")
     exit()
 
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=30))
