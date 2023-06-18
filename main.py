@@ -368,6 +368,7 @@ def main():
         )
         st.subheader("c) Visualisierung ")
         # st.line_chart(df_date, use_container_width=True, y=["totalUsers", "sessions", "newUsers"], x="date")
+        # TODO: Vorzeichen hinzufügen
 
         col1, col2, col3, col4 = st.columns(4)
         col1.metric(
