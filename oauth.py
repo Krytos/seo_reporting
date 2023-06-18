@@ -141,6 +141,7 @@ def ga_auth():
     service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'] or token)
     admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'] or token)
     beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'] or token)
+    st.experimental_rerun()
     return service, admin_service, beta_client
 
 
