@@ -36,7 +36,8 @@ try:
     account_name = accounts_list["accountSummaries"][0]["account"]
     account_properties = [prop for prop in accounts_list["accountSummaries"][0]["propertySummaries"]]
 except Exception as e:
-    st.error("Keine Rechte zum Aufrufen der Daten: " + str(e))
+    st.error("Allem Anschein nach haben Sie entweder kein Google Analytics Konto oder kein GA4 Property."
+            "Vergewissern Sie sich, dass Sie ein GA4 Property haben und dass Sie Zugriff darauf haben.")
     exit()
 
 properties_drowdown = st.sidebar.selectbox(
@@ -68,8 +69,8 @@ hostname = (
 website = hostname["reports"][0].get("rows")
 website = website[0]["dimensionValues"][0]["value"].rsplit("/", 1)[0] if website else "N/A"
 if website == "N/A":
-    st.error("Keine Daten für diese Property gefunden")
-    st.write(hostname)
+    st.error("Keine Daten für diese Property gefunden. Bitte stellen Sie sicher, dass sie die nötigen Tags auf Ihrer "
+             "Website installiert haben und GA4 benutzen.")
     exit()
 
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=30))
