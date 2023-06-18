@@ -135,9 +135,12 @@ def ga_auth():
             open_url()
             st.experimental_rerun()
         token = flow.credentials
+        st.write(token)
         st.session_state['token'] = token
+        st.write(st.session_state['token'])
         st.session_state['state'] = AuthorizedSession(token)
-        st.experimental_set_query_params()
+        st.write(st.session_state['state'])
+        # st.experimental_set_query_params()
     service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'] or token)
     admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'] or token)
     beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'] or token)
