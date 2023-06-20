@@ -77,7 +77,6 @@ def ga_auth():
             flow.redirect_uri = REDIRECT_URI
             if 'code' not in st.session_state:
                 st.sidebar.button("Login", on_click=open_url, args=(flow,))
-                st.experimental_rerun()
             if 'code' in st.session_state:
                 flow.fetch_token(code=st.session_state['code'])
                 st.session_state['code'] = None

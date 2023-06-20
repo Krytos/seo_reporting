@@ -31,6 +31,7 @@ if "creds" in st.session_state:
 else:
     st.write("No creds")
     ga_auth()
+    st.stop()
 
 
 st.sidebar.button('Logout', on_click=logout)
