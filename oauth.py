@@ -85,6 +85,6 @@ def ga_auth():
 
 
 def logout():
-    os.remove('token.json')
+    # os.remove('token.json')
     st.session_state.clear()
     st.session_state["logout"] = True
