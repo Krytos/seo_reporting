@@ -3,7 +3,7 @@ import os.path
 # import locale
 import pandas as pd
 import calendar
-from oauth import ga_auth, logout
+from oauth import ga_auth, logout, services
 from google.analytics.data_v1beta.types import (
     DateRange,
     Dimension,
@@ -23,12 +23,12 @@ fromtimestamp = datetime.fromtimestamp
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
-if "creds" in st.session_state:
-    st.write(st.session_state["creds"])
-
 if 'code' in st.session_state:
     st.write(st.session_state['code'])
-service, admin_service, beta_client = ga_auth()
+if "creds" in st.session_state:
+    st.write(st.session_state["creds"])
+    service, admin_service, beta_client = services(st.session_state['creds'])
+
 
 st.sidebar.button('Logout', on_click=logout)
 if st.session_state.get('logout', False):
