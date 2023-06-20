@@ -57,7 +57,7 @@ def open_url(flow):
 	    """
         html(open_script)
         st.session_state['url'] = True
-        # st.experimental_rerun()
+        st.experimental_rerun()
 
 def services(token):
     service = build('analyticsdata', 'v1beta', credentials=token)
