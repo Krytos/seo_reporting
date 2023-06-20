@@ -120,6 +120,7 @@ def ga_auth():
     creds = None
     if 'creds' in st.session_state:
         creds = st.session_state['creds']
+        return services(creds)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
