@@ -111,22 +111,33 @@ def open_url():
 #         return service, admin_service, beta_client
 #     else:
 #         st.experimental_rerun()
-
+def services(token):
+    service = build('analyticsdata', 'v1beta', credentials=token)
+    admin_service = build('analyticsadmin', 'v1beta', credentials=token)
+    beta_client = BetaAnalyticsDataClient(credentials=token)
+    return service, admin_service, beta_client
 def ga_auth():
     if 'token' in st.session_state:
+        st.write(
+            "token in session state",
+            st.session_state['token'])
         try:
             token = st.session_state['token']
             st.session_state['state'] = AuthorizedSession(token)
+            return services(token)
         except RefreshError:
             st.session_state['token'] = None
         except ValueError:
             st.session_state['token'] = None
     else:
+        st.write(
+            "token NOT in session state", st.session_state['token']
+        )
         code = st.experimental_get_query_params().get('code', None)
         code = code[0] if code else None
         if not code:
             st.sidebar.button("Login", on_click=open_url)
-            st.experimental_rerun()
+            st.stop()
         flow = Flow.from_client_config(SECRET, SCOPES)
         flow.redirect_uri = REDIRECT_URI
         try:
@@ -141,11 +152,7 @@ def ga_auth():
         st.session_state['state'] = AuthorizedSession(token)
         st.write(st.session_state['state'])
         # st.experimental_set_query_params()
-    service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'] or token)
-    admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'] or token)
-    beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'] or token)
-    st.experimental_rerun()
-    return service, admin_service, beta_client
+        return services(token)
 
 
 def logout():
