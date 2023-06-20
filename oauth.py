@@ -32,7 +32,7 @@ REDIRECT_URI = SECRET['web']['redirect_uris'][URI]
 SCOPE = SCOPES[0]
 
 
-def open_url():
+def open_url(flow):
     if "localhost" in REDIRECT_URI:
         secret = {'installed': SECRET['web']}
         flow = InstalledAppFlow.from_client_config(secret, scopes=SCOPES)
@@ -40,8 +40,6 @@ def open_url():
         print(flow.redirect_uri)
         flow.run_local_server(port=8501)
     else:
-        flow = Flow.from_client_config(SECRET, scopes=SCOPES)
-        flow.redirect_uri = REDIRECT_URI
         auth_url, state = flow.authorization_url()
         open_script = f"""
 	        <script type="text/javascript">
@@ -49,68 +47,12 @@ def open_url():
 	        </script>
 	    """
         html(open_script)
+        code = None
+        while not code:
+            if 'code' in st.experimental_get_query_params():
+                code = st.experimental_get_query_params()['code'][0]
+                st.session_state['code'] = code
 
-
-# def ga_auth():
-#     if os.path.exists('token.json'):
-#         try:
-#             with open('token.json', 'r') as f:
-#                 token = json.load(f)
-#             token = Credentials(
-#                 token['token'],
-#                 token_uri=token['token_uri'],
-#                 client_id=token['client_id'],
-#                 client_secret=token['client_secret'],
-#                 scopes=token['scopes'],
-#             )
-#             st.session_state['state'] = AuthorizedSession(token)
-#             with open('token.json', 'w') as f:
-#                 f.write(token.to_json())
-#             st.session_state['token'] = token
-#         except RefreshError:
-#             os.remove('token.json')
-#             st.session_state['token'] = None
-#         except ValueError:
-#             os.remove('token.json')
-#             st.session_state['token'] = None
-#     elif 'token' in st.session_state:
-#         try:
-#             token = st.session_state['token']
-#             st.session_state['state'] = AuthorizedSession(token)
-#         except RefreshError:
-#             st.session_state['token'] = None
-#         except ValueError:
-#             st.session_state['token'] = None
-#     else:
-#         code = st.experimental_get_query_params().get('code', None)
-#         code = code[0] if code else None
-#         if not code:
-#             st.sidebar.button("Login", on_click=open_url)
-#             st.stop()
-#         flow = Flow.from_client_config(SECRET, SCOPES)
-#         flow.redirect_uri = REDIRECT_URI
-#         try:
-#             flow.fetch_token(code=code)
-#         except Exception as e:
-#             open_url()
-#             st.experimental_rerun()
-#         token = flow.credentials
-#         with open('token.json', 'w') as f:
-#             f.write(token.to_json())
-#         st.session_state['token'] = token
-#         st.experimental_set_query_params()
-#     if 'token' in locals():
-#         service = build('analyticsdata', 'v1beta', credentials=token)
-#         admin_service = build('analyticsadmin', 'v1beta', credentials=token)
-#         beta_client = BetaAnalyticsDataClient(credentials=token)
-#         return service, admin_service, beta_client
-#     elif 'token' in st.session_state:
-#         service = build('analyticsdata', 'v1beta', credentials=st.session_state['token'])
-#         admin_service = build('analyticsadmin', 'v1beta', credentials=st.session_state['token'])
-#         beta_client = BetaAnalyticsDataClient(credentials=st.session_state['token'])
-#         return service, admin_service, beta_client
-#     else:
-#         st.experimental_rerun()
 def services(token):
     service = build('analyticsdata', 'v1beta', credentials=token)
     admin_service = build('analyticsadmin', 'v1beta', credentials=token)
@@ -127,18 +69,12 @@ def ga_auth():
             st.session_state['creds'] = creds
             return services(creds)
         else:
-            code = st.experimental_get_query_params().get('code', None)
-            code = code[0] if code else None
-            if not code:
-                st.sidebar.button("Login", on_click=open_url)
-                st.stop()
             flow = Flow.from_client_config(SECRET, SCOPES)
             flow.redirect_uri = REDIRECT_URI
-            try:
-                flow.fetch_token(code=code)
-            except Exception as e:
-                open_url()
-                st.experimental_rerun()
+            if 'code' not in st.session_state:
+                st.sidebar.button("Login", on_click=open_url, args=(flow,))
+            flow.fetch_token(code=st.session_state['code'])
+            st.session_state['code'] = None
             token = flow.credentials
             st.session_state['creds'] = token
             st.experimental_set_query_params()
