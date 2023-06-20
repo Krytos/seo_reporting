@@ -125,6 +125,7 @@ def ga_auth():
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
             st.session_state['creds'] = creds
+            return services(creds)
         else:
             code = st.experimental_get_query_params().get('code', None)
             code = code[0] if code else None
