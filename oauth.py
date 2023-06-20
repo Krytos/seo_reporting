@@ -39,8 +39,7 @@ def open_url(flow):
             if st.session_state['code']:
                 st.session_state['code'] = st.session_state['code'][0]
                 st.experimental_set_query_params()
-                st.experimental_rerun()
-    if "localhost" in REDIRECT_URI:
+    elif "localhost" in REDIRECT_URI:
         secret = {'installed': SECRET['web']}
         flow = InstalledAppFlow.from_client_config(secret, scopes=SCOPES)
         flow.redirect_uri = REDIRECT_URI
@@ -76,7 +75,7 @@ def ga_auth():
             flow.redirect_uri = REDIRECT_URI
             if 'code' not in st.session_state:
                 st.sidebar.button("Login", on_click=open_url, args=(flow,))
-            else:
+            if 'code' in st.session_state:
                 flow.fetch_token(code=st.session_state['code'])
                 st.session_state['code'] = None
                 token = flow.credentials
