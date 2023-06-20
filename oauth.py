@@ -49,6 +49,12 @@ def open_url(flow):
         html(open_script)
         st.session_state['url'] = True
 
+def get_code():
+    if 'code' in st.experimental_get_query_params():
+        st.session_state['code'] = st.experimental_get_query_params()['code'][0]
+        st.experimental_set_query_params()
+        st.experimental_rerun()
+
 def services(token):
     service = build('analyticsdata', 'v1beta', credentials=token)
     admin_service = build('analyticsadmin', 'v1beta', credentials=token)
@@ -71,18 +77,14 @@ def ga_auth():
                 if 'url' not in st.session_state:
                     st.sidebar.button("Login", on_click=open_url, args=(flow,))
                     while 'code' not in st.session_state:
-                        if 'code' in st.experimental_get_query_params():
-                            st.session_state['code'] = st.experimental_get_query_params()['code'][0]
-                            st.experimental_set_query_params()
-                            st.experimental_rerun()
+                        get_code()
                 else:
-                    open_url(flow)
+                    get_code()
             if 'code' in st.session_state:
                 flow.fetch_token(code=st.session_state['code'])
                 st.session_state['code'] = None
                 token = flow.credentials
                 st.session_state['creds'] = token
-                st.experimental_set_query_params()
                 st.experimental_rerun()
 
 

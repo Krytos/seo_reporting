@@ -23,13 +23,9 @@ fromtimestamp = datetime.fromtimestamp
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
-if 'code' in st.session_state:
-    st.write(st.session_state['code'])
 if "creds" in st.session_state:
-    st.write(st.session_state["creds"])
     service, admin_service, beta_client = services(st.session_state['creds'])
 else:
-    st.write("No creds")
     ga_auth()
 
 
