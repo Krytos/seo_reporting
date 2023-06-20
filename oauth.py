@@ -33,6 +33,13 @@ SCOPE = SCOPES[0]
 
 
 def open_url(flow):
+    if 'url' in st.session_state:
+        if 'code' not in st.session_state:
+            st.session_state['code'] = st.experimental_get_query_params()['code']
+            if st.session_state['code']:
+                st.session_state['code'] = st.session_state['code'][0]
+                st.experimental_set_query_params()
+                st.experimental_rerun()
     if "localhost" in REDIRECT_URI:
         secret = {'installed': SECRET['web']}
         flow = InstalledAppFlow.from_client_config(secret, scopes=SCOPES)
@@ -47,11 +54,7 @@ def open_url(flow):
 	        </script>
 	    """
         html(open_script)
-        code = None
-        while not code:
-            if 'code' in st.experimental_get_query_params():
-                code = st.experimental_get_query_params()['code'][0]
-                st.session_state['code'] = code
+        st.session_state['url'] = True
 
 def services(token):
     service = build('analyticsdata', 'v1beta', credentials=token)
@@ -73,12 +76,13 @@ def ga_auth():
             flow.redirect_uri = REDIRECT_URI
             if 'code' not in st.session_state:
                 st.sidebar.button("Login", on_click=open_url, args=(flow,))
-            flow.fetch_token(code=st.session_state['code'])
-            st.session_state['code'] = None
-            token = flow.credentials
-            st.session_state['creds'] = token
-            st.experimental_set_query_params()
-            st.experimental_rerun()
+            else:
+                flow.fetch_token(code=st.session_state['code'])
+                st.session_state['code'] = None
+                token = flow.credentials
+                st.session_state['creds'] = token
+                st.experimental_set_query_params()
+                st.experimental_rerun()
 
 
 def logout():
