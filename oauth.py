@@ -130,9 +130,6 @@ def ga_auth():
         except ValueError:
             st.session_state['token'] = None
     else:
-        st.write(
-            "token NOT in session state", st.session_state['token']
-        )
         code = st.experimental_get_query_params().get('code', None)
         code = code[0] if code else None
         if not code:
