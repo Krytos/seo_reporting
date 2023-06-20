@@ -28,8 +28,6 @@ service, admin_service, beta_client = ga_auth()
 st.sidebar.button('Logout', on_click=logout)
 if st.session_state.get('logout', False):
     st.experimental_rerun()
-if not os.path.exists('token.json'):
-    st.experimental_rerun()
 
 try:
     accounts_list = admin_service.accountSummaries().list().execute()

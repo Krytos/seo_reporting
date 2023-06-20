@@ -141,6 +141,7 @@ def ga_auth():
             token = flow.credentials
             st.session_state['creds'] = token
             st.experimental_set_query_params()
+            st.experimental_rerun()
 
 
 def logout():
