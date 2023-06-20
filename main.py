@@ -25,6 +25,7 @@ st.sidebar.header("SEO Analyse")
 
 if "creds" in st.session_state:
     service, admin_service, beta_client = services(st.session_state['creds'])
+    st.experimental_set_query_params()
 else:
     ga_auth()
 

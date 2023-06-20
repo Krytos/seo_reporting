@@ -64,12 +64,12 @@ def ga_auth():
     creds = None
     if 'creds' in st.session_state:
         creds = st.session_state['creds']
-        return services(creds)
+        st.experimental_rerun()
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
             st.session_state['creds'] = creds
-            return services(creds)
+            st.experimental_rerun()
         else:
             flow = Flow.from_client_config(SECRET, SCOPES)
             flow.redirect_uri = REDIRECT_URI
