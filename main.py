@@ -23,6 +23,11 @@ fromtimestamp = datetime.fromtimestamp
 # Sidebar
 st.sidebar.header("SEO Analyse")
 
+if "creds" in st.session_state:
+    st.write(st.session_state["creds"])
+
+if 'code' in st.session_state:
+    st.write(st.session_state['code'])
 service, admin_service, beta_client = ga_auth()
 
 st.sidebar.button('Logout', on_click=logout)
