@@ -117,39 +117,29 @@ def services(token):
     beta_client = BetaAnalyticsDataClient(credentials=token)
     return service, admin_service, beta_client
 def ga_auth():
-    if 'token' in st.session_state:
-        st.write(
-            "token in session state",
-            st.session_state['token'])
-        try:
-            token = st.session_state['token']
-            st.session_state['state'] = AuthorizedSession(token)
-            return services(token)
-        except RefreshError:
-            st.session_state['token'] = None
-        except ValueError:
-            st.session_state['token'] = None
-    else:
-        code = st.experimental_get_query_params().get('code', None)
-        code = code[0] if code else None
-        if not code:
-            st.sidebar.button("Login", on_click=open_url)
-            st.stop()
-        flow = Flow.from_client_config(SECRET, SCOPES)
-        flow.redirect_uri = REDIRECT_URI
-        try:
-            flow.fetch_token(code=code)
-        except Exception as e:
-            open_url()
-            st.experimental_rerun()
-        token = flow.credentials
-        st.write(token)
-        st.session_state['token'] = token
-        st.write(st.session_state['token'])
-        st.session_state['state'] = AuthorizedSession(token)
-        st.write(st.session_state['state'])
-        # st.experimental_set_query_params()
-        return services(token)
+    creds = None
+    if 'creds' in st.session_state:
+        creds = st.session_state['creds']
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+            st.session_state['creds'] = creds
+        else:
+            code = st.experimental_get_query_params().get('code', None)
+            code = code[0] if code else None
+            if not code:
+                st.sidebar.button("Login", on_click=open_url)
+                st.stop()
+            flow = Flow.from_client_config(SECRET, SCOPES)
+            flow.redirect_uri = REDIRECT_URI
+            try:
+                flow.fetch_token(code=code)
+            except Exception as e:
+                open_url()
+                st.experimental_rerun()
+            token = flow.credentials
+            st.session_state['creds'] = token
+            st.experimental_set_query_params()
 
 
 def logout():
