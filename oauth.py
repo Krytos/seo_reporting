@@ -40,6 +40,8 @@ def open_url(flow):
                 st.session_state['code'] = st.session_state['code'][0]
                 st.experimental_set_query_params()
                 # st.experimental_rerun()
+        else:
+            st.experimental_rerun()
     elif "localhost" in REDIRECT_URI:
         secret = {'installed': SECRET['web']}
         flow = InstalledAppFlow.from_client_config(secret, scopes=SCOPES)
