@@ -39,6 +39,7 @@ def open_url(flow):
             if st.session_state['code']:
                 st.session_state['code'] = st.session_state['code'][0]
                 st.experimental_set_query_params()
+                # st.experimental_rerun()
     elif "localhost" in REDIRECT_URI:
         secret = {'installed': SECRET['web']}
         flow = InstalledAppFlow.from_client_config(secret, scopes=SCOPES)
@@ -54,6 +55,7 @@ def open_url(flow):
 	    """
         html(open_script)
         st.session_state['url'] = True
+        # st.experimental_rerun()
 
 def services(token):
     service = build('analyticsdata', 'v1beta', credentials=token)
@@ -81,6 +83,8 @@ def ga_auth():
                 token = flow.credentials
                 st.session_state['creds'] = token
                 st.experimental_set_query_params()
+                st.experimental_rerun()
+            else:
                 st.experimental_rerun()
 
 
