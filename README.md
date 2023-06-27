@@ -3,11 +3,11 @@ This Python script uses the Google Analytics API to retrieve data and display it
 
 ## Installation
 1) Clone the repository to your local machine.
-2) Install the required dependencies by running pip install -r requirements.txt.
+2) Install the required dependencies by running ```pip install -r requirements.txt```.
 3) Authenticate with the Google Analytics API by running the script and following the prompts.
 
 ## Usage
-1) Run the script by running python main.py in your terminal.
+1) Run the script by running ```streamlit run main.py``` in your terminal.
 2) Authenticate with the Google Analytics API by following the prompts.
 3) Select a GA4 property from the dropdown menu in the sidebar.
 4) View data for the selected property in the main panel.
