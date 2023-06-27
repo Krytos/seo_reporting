@@ -12,6 +12,8 @@ This Python script uses the Google Analytics API to retrieve data and display it
 3) Select a GA4 property from the dropdown menu in the sidebar.
 4) View data for the selected property in the main panel.
 
+![Image](https://i.imgur.com/F4MMlrS.png)
+
 ## Contributing
 Contributions are welcome! Please fork the repository and submit a pull request.
 
